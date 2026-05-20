@@ -11,7 +11,7 @@ use std::path::PathBuf;
 use std::process::Stdio;
 use std::sync::Arc;
 use std::time::Duration;
-use tauri::{AppHandle, Emitter};
+use tauri::{AppHandle, Emitter, Manager};
 use tokio::io::{AsyncBufReadExt, BufReader};
 use tokio::process::Command;
 use tokio::sync::Mutex;
@@ -116,15 +116,20 @@ pub struct UpgradeProgress {
     pub line: Option<String>,
 }
 
-// ─── manifest 路径解析（生产 → 开发回退） ────────────
+// ─── manifest 路径解析（Tauri resource → 生产 → 开发回退） ────────────
 
-fn manifest_candidate_paths() -> Vec<PathBuf> {
-    let mut v = vec![
-        PathBuf::from("/usr/share/webclaw-upgrader/software-manifest.json"),
-        PathBuf::from("../software-manifest.json"),
-        PathBuf::from("software-manifest.json"),
-    ];
-    // 开发期：相对可执行文件
+fn manifest_candidate_paths(app: &AppHandle) -> Vec<PathBuf> {
+    let mut v = Vec::new();
+    // 优先：Tauri bundle resource 目录（打包后的正式路径）
+    if let Ok(resource_dir) = app.path().resource_dir() {
+        v.push(resource_dir.join("software-manifest.json"));
+    }
+    // 生产 Linux 安装路径
+    v.push(PathBuf::from("/usr/share/webclaw-upgrader/software-manifest.json"));
+    // 开发期 CWD 相对路径
+    v.push(PathBuf::from("../software-manifest.json"));
+    v.push(PathBuf::from("software-manifest.json"));
+    // 开发期：相对可执行文件（cargo run / tauri dev）
     if let Ok(exe) = std::env::current_exe() {
         if let Some(parent) = exe.parent() {
             v.push(parent.join("../../software-manifest.json"));
@@ -134,8 +139,8 @@ fn manifest_candidate_paths() -> Vec<PathBuf> {
     v
 }
 
-async fn read_manifest() -> Result<ManifestFile> {
-    for p in manifest_candidate_paths() {
+async fn read_manifest(app: &AppHandle) -> Result<ManifestFile> {
+    for p in manifest_candidate_paths(app) {
         if p.exists() {
             let content = tokio::fs::read_to_string(&p)
                 .await
@@ -145,13 +150,13 @@ async fn read_manifest() -> Result<ManifestFile> {
         }
     }
     Err(anyhow!(
-        "software-manifest.json 未找到（已尝试 /usr/share、相对路径、可执行文件邻近）"
+        "software-manifest.json 未找到（已尝试 Tauri resource 目录、/usr/share、相对路径、可执行文件邻近）"
     ))
 }
 
 #[tauri::command]
-pub async fn load_manifest() -> Result<Vec<SoftwareEntry>, String> {
-    let m = read_manifest().await.map_err(|e| e.to_string())?;
+pub async fn load_manifest(app: AppHandle) -> Result<Vec<SoftwareEntry>, String> {
+    let m = read_manifest(&app).await.map_err(|e| e.to_string())?;
     Ok(m.software)
 }
 
@@ -231,8 +236,8 @@ async fn detect_shell(cmd: &str, version_regex: &str) -> Result<Option<String>> 
 }
 
 #[tauri::command]
-pub async fn detect_all() -> Result<Vec<SoftwareCard>, String> {
-    let manifest = read_manifest().await.map_err(|e| e.to_string())?;
+pub async fn detect_all(app: AppHandle) -> Result<Vec<SoftwareCard>, String> {
+    let manifest = read_manifest(&app).await.map_err(|e| e.to_string())?;
     let mut handles = Vec::new();
     for entry in manifest.software {
         let h = tokio::spawn(async move {
@@ -322,8 +327,8 @@ async fn fetch_apt_policy(pkg: &str) -> Result<Option<String>> {
 }
 
 #[tauri::command]
-pub async fn check_latest_all() -> Result<Vec<SoftwareCard>, String> {
-    let manifest = read_manifest().await.map_err(|e| e.to_string())?;
+pub async fn check_latest_all(app: AppHandle) -> Result<Vec<SoftwareCard>, String> {
+    let manifest = read_manifest(&app).await.map_err(|e| e.to_string())?;
     let mut handles = Vec::new();
     for entry in manifest.software {
         let h = tokio::spawn(async move {
@@ -451,7 +456,7 @@ pub async fn upgrade_software(
     if !snapshot_confirmed {
         return Err("请先勾选「已完成卷快照」再升级".into());
     }
-    let manifest = read_manifest().await.map_err(|e| e.to_string())?;
+    let manifest = read_manifest(&app).await.map_err(|e| e.to_string())?;
     let entry = manifest
         .software
         .into_iter()
@@ -731,7 +736,7 @@ pub async fn get_upgrade_history() -> Result<Vec<HistoryEntry>, String> {
 // ─── locked entries 暴露 ─────────────────────────────
 
 #[tauri::command]
-pub async fn list_locked() -> Result<Vec<LockedEntry>, String> {
-    let m = read_manifest().await.map_err(|e| e.to_string())?;
+pub async fn list_locked(app: AppHandle) -> Result<Vec<LockedEntry>, String> {
+    let m = read_manifest(&app).await.map_err(|e| e.to_string())?;
     Ok(m.locked)
 }
