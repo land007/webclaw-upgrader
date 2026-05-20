@@ -1,0 +1,94 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>WebClaw 升级中心</title>
+  <link rel="stylesheet" href="styles.css" />
+</head>
+<body>
+<div id="app">
+
+  <header id="toolbar">
+    <span id="toolbar-title">WebClaw 升级中心</span>
+    <div id="dir-row">
+      <span id="current-dir" title="manifest 版本">manifest: -</span>
+    </div>
+    <div id="toolbar-actions">
+      <button id="btn-refresh" class="btn-primary">扫描 & 检查更新</button>
+      <button id="btn-theme" class="btn-ghost btn-sm" title="切换主题"></button>
+    </div>
+  </header>
+
+  <nav id="tabs">
+    <button class="tab-btn tab-active" data-tab="software">软件升级</button>
+    <button class="tab-btn" data-tab="supervisor">进程状态</button>
+  </nav>
+
+  <main id="repo-grid">
+    <div id="software-pane" class="tab-pane">
+      <div id="empty-state">点击「扫描 & 检查更新」加载容器内已安装软件清单</div>
+    </div>
+    <div id="supervisor-pane" class="tab-pane hidden">
+      <div id="empty-state-sv">点击「扫描 & 检查更新」加载 supervisor 进程列表</div>
+    </div>
+  </main>
+
+  <div id="log-panel">
+    <div id="log-header">
+      <span id="log-title">操作日志</span>
+      <div id="log-controls">
+        <button id="btn-log-toggle" class="btn-ghost btn-sm">收起</button>
+        <button id="btn-log-clear" class="btn-ghost btn-sm">清空</button>
+      </div>
+    </div>
+    <div id="log-output"></div>
+  </div>
+
+  <!-- 升级前快照确认弹窗 -->
+  <div id="confirm-modal" class="modal hidden">
+    <div class="modal-backdrop" id="confirm-backdrop"></div>
+    <div class="modal-box">
+      <div class="modal-header">
+        <h2 id="confirm-title">确认升级</h2>
+        <button id="btn-confirm-close" class="btn-ghost btn-sm">✕</button>
+      </div>
+      <div class="snapshot-warning">
+        ⚠️ <strong>升级前建议先在 webclaw-launcher 里做一次卷快照</strong>。
+        本 app 不做自动回滚——如升级失败，需要从快照恢复。
+      </div>
+      <div class="form-group">
+        <label>即将执行的命令</label>
+        <div id="confirm-command" class="command-preview"></div>
+      </div>
+      <div class="snapshot-confirm-row">
+        <input type="checkbox" id="snapshot-checked" />
+        <label for="snapshot-checked">我已在 launcher 完成卷快照（或确认不需要回滚）</label>
+      </div>
+      <div class="modal-actions">
+        <button id="btn-confirm-cancel" class="btn-ghost">取消</button>
+        <button id="btn-confirm-go" class="btn-primary" disabled>开始升级</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- 升级进度抽屉 -->
+  <div id="upgrade-drawer">
+    <div id="upgrade-drawer-header">
+      <div id="upgrade-drawer-title">升级中...</div>
+      <span id="upgrade-drawer-stage">PENDING</span>
+      <button id="btn-drawer-close" class="btn-ghost btn-sm">✕</button>
+    </div>
+    <div id="upgrade-progress-bar">
+      <div id="upgrade-progress-fill"></div>
+    </div>
+    <div id="upgrade-drawer-output"></div>
+    <div id="upgrade-drawer-actions">
+      <button id="btn-cancel-upgrade" class="btn-danger">取消</button>
+    </div>
+  </div>
+
+</div>
+<script src="main.js"></script>
+</body>
+</html>

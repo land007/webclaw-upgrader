@@ -1,0 +1,120 @@
+{
+  "$schema": "./software-manifest.schema.json",
+  "version": "0.1.0",
+  "_comment": "Capability Registry 在「容器内软件升级」sub-domain 的具体实例。Rust 端按 detect/latest/upgrade 的 type 字段分发到对应处理器。",
+  "software": [
+    {
+      "id": "openclaw",
+      "name": "OpenClaw",
+      "category": "ai-gateway",
+      "risk": "medium",
+      "detect": { "type": "npm-global", "pkg": "openclaw" },
+      "latest":  { "type": "npm-registry", "pkg": "openclaw" },
+      "upgrade": { "type": "npm-global", "pkg": "openclaw", "post_install": ["supervisorctl restart openclaw"] }
+    },
+    {
+      "id": "webclaw-dashboard-server",
+      "name": "WebClaw Dashboard Server",
+      "category": "gateway",
+      "risk": "high",
+      "detect": { "type": "npm-global", "pkg": "webclaw-dashboard-server" },
+      "latest":  { "type": "npm-registry", "pkg": "webclaw-dashboard-server" },
+      "upgrade": { "type": "npm-global", "pkg": "webclaw-dashboard-server", "post_install": ["supervisorctl restart dashboard"] }
+    },
+    {
+      "id": "claude-code",
+      "name": "Claude Code CLI",
+      "category": "ai-cli",
+      "risk": "low",
+      "detect": { "type": "npm-global", "pkg": "@anthropic-ai/claude-code" },
+      "latest":  { "type": "npm-registry", "pkg": "@anthropic-ai/claude-code" },
+      "upgrade": { "type": "npm-global", "pkg": "@anthropic-ai/claude-code" }
+    },
+    {
+      "id": "claude-code-ui",
+      "name": "Claude Code UI",
+      "category": "ai-ui",
+      "risk": "medium",
+      "detect": { "type": "npm-global", "pkg": "@siteboon/claudecodeui" },
+      "latest":  { "type": "npm-registry", "pkg": "@siteboon/claudecodeui" },
+      "upgrade": { "type": "npm-global", "pkg": "@siteboon/claudecodeui", "post_install": ["supervisorctl restart claudecodeui"] }
+    },
+    {
+      "id": "opencode-ai",
+      "name": "OpenCode AI",
+      "category": "ai-cli",
+      "risk": "low",
+      "detect": { "type": "npm-global", "pkg": "opencode-ai" },
+      "latest":  { "type": "npm-registry", "pkg": "opencode-ai" },
+      "upgrade": { "type": "npm-global", "pkg": "opencode-ai" }
+    },
+    {
+      "id": "code-server",
+      "name": "code-server (VS Code)",
+      "category": "ide",
+      "risk": "medium",
+      "detect": {
+        "type": "shell",
+        "cmd": "code-server --version | head -n1",
+        "version_regex": "^([0-9]+\\.[0-9]+\\.[0-9]+)"
+      },
+      "latest": { "type": "github-release", "repo": "coder/code-server" },
+      "upgrade": {
+        "type": "binary-download",
+        "url_template": "https://github.com/coder/code-server/releases/download/v{version}/code-server-{version}-linux-{arch}.tar.gz",
+        "install_path": "/opt/code-server",
+        "post_install": ["supervisorctl restart code-server"]
+      }
+    },
+    {
+      "id": "supervisor",
+      "name": "Supervisor",
+      "category": "system",
+      "risk": "high",
+      "detect": { "type": "dpkg", "pkg": "supervisor" },
+      "latest":  { "type": "apt-policy", "pkg": "supervisor" },
+      "upgrade": { "type": "apt", "pkg": "supervisor" }
+    },
+    {
+      "id": "gh",
+      "name": "GitHub CLI",
+      "category": "cli",
+      "risk": "low",
+      "detect": { "type": "dpkg", "pkg": "gh" },
+      "latest":  { "type": "apt-policy", "pkg": "gh" },
+      "upgrade": { "type": "apt", "pkg": "gh" }
+    },
+    {
+      "id": "cloudflared",
+      "name": "Cloudflare Tunnel",
+      "category": "network",
+      "risk": "medium",
+      "detect": { "type": "dpkg", "pkg": "cloudflared" },
+      "latest":  { "type": "apt-policy", "pkg": "cloudflared" },
+      "upgrade": { "type": "apt", "pkg": "cloudflared", "post_install": ["supervisorctl restart cloudflared"] }
+    },
+    {
+      "id": "docker-ce-cli",
+      "name": "Docker CLI",
+      "category": "cli",
+      "risk": "low",
+      "detect": { "type": "dpkg", "pkg": "docker-ce-cli" },
+      "latest":  { "type": "apt-policy", "pkg": "docker-ce-cli" },
+      "upgrade": { "type": "apt", "pkg": "docker-ce-cli" }
+    }
+  ],
+  "locked": [
+    {
+      "id": "nodejs",
+      "name": "Node.js",
+      "reason": "Dockerfile.base ARG NODE_VERSION 锁定在 22.22.1，请修改 Dockerfile.base 后重建镜像",
+      "dockerfile_line": "ARG NODE_VERSION=22.22.1"
+    },
+    {
+      "id": "vibe-kanban",
+      "name": "Vibe Kanban",
+      "reason": "Dockerfile.full 锁定版本号 0.1.8，请修改后重建",
+      "dockerfile_line": "RUN npm install -g vibe-kanban@0.1.8"
+    }
+  ]
+}
