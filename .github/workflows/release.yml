@@ -24,9 +24,9 @@ jobs:
           ver = os.environ['VER'].lstrip('v')
           for fp in ['package.json', 'src-tauri/tauri.conf.json']:
               p = pathlib.Path(fp)
-              p.write_text(re.sub(r'"version":\s*"[^"]+"', f'"version": "{ver}"', p.read_text(), count=1))
+              p.write_text(re.sub(r'"version":\s*"[^"]+"', f'"version": "{ver}"', p.read_text(encoding='utf-8'), count=1), encoding='utf-8')
           p = pathlib.Path('src-tauri/Cargo.toml')
-          p.write_text(re.sub(r'(?m)^version = "[^"]+"', f'version = "{ver}"', p.read_text(), count=1))
+          p.write_text(re.sub(r'(?m)^version = "[^"]+"', f'version = "{ver}"', p.read_text(encoding='utf-8'), count=1), encoding='utf-8')
           print(f"Synced to {ver}")
           PYEOF
 
@@ -77,9 +77,9 @@ jobs:
           ver = os.environ['VER'].lstrip('v')
           for fp in ['package.json', 'src-tauri/tauri.conf.json']:
               p = pathlib.Path(fp)
-              p.write_text(re.sub(r'"version":\s*"[^"]+"', f'"version": "{ver}"', p.read_text(), count=1))
+              p.write_text(re.sub(r'"version":\s*"[^"]+"', f'"version": "{ver}"', p.read_text(encoding='utf-8'), count=1), encoding='utf-8')
           p = pathlib.Path('src-tauri/Cargo.toml')
-          p.write_text(re.sub(r'(?m)^version = "[^"]+"', f'version = "{ver}"', p.read_text(), count=1))
+          p.write_text(re.sub(r'(?m)^version = "[^"]+"', f'version = "{ver}"', p.read_text(encoding='utf-8'), count=1), encoding='utf-8')
           print(f"Synced to {ver}")
           PYEOF
 
@@ -130,9 +130,9 @@ jobs:
           ver = os.environ['VER'].lstrip('v')
           for fp in ['package.json', 'src-tauri/tauri.conf.json']:
               p = pathlib.Path(fp)
-              p.write_text(re.sub(r'"version":\s*"[^"]+"', f'"version": "{ver}"', p.read_text(), count=1))
+              p.write_text(re.sub(r'"version":\s*"[^"]+"', f'"version": "{ver}"', p.read_text(encoding='utf-8'), count=1), encoding='utf-8')
           p = pathlib.Path('src-tauri/Cargo.toml')
-          p.write_text(re.sub(r'(?m)^version = "[^"]+"', f'version = "{ver}"', p.read_text(), count=1))
+          p.write_text(re.sub(r'(?m)^version = "[^"]+"', f'version = "{ver}"', p.read_text(encoding='utf-8'), count=1), encoding='utf-8')
           print(f"Synced to {ver}")
           PYEOF
 
@@ -192,9 +192,9 @@ jobs:
           ver = os.environ['VER'].lstrip('v')
           for fp in ['package.json', 'src-tauri/tauri.conf.json']:
               p = pathlib.Path(fp)
-              p.write_text(re.sub(r'"version":\s*"[^"]+"', f'"version": "{ver}"', p.read_text(), count=1))
+              p.write_text(re.sub(r'"version":\s*"[^"]+"', f'"version": "{ver}"', p.read_text(encoding='utf-8'), count=1), encoding='utf-8')
           p = pathlib.Path('src-tauri/Cargo.toml')
-          p.write_text(re.sub(r'(?m)^version = "[^"]+"', f'version = "{ver}"', p.read_text(), count=1))
+          p.write_text(re.sub(r'(?m)^version = "[^"]+"', f'version = "{ver}"', p.read_text(encoding='utf-8'), count=1), encoding='utf-8')
           print(f"Synced to {ver}")
           PYEOF
 
@@ -256,9 +256,9 @@ jobs:
           ver = os.environ['VER'].lstrip('v')
           for fp in ['package.json', 'src-tauri/tauri.conf.json']:
               p = pathlib.Path(fp)
-              p.write_text(re.sub(r'"version":\s*"[^"]+"', f'"version": "{ver}"', p.read_text(), count=1))
+              p.write_text(re.sub(r'"version":\s*"[^"]+"', f'"version": "{ver}"', p.read_text(encoding='utf-8'), count=1), encoding='utf-8')
           p = pathlib.Path('src-tauri/Cargo.toml')
-          p.write_text(re.sub(r'(?m)^version = "[^"]+"', f'version = "{ver}"', p.read_text(), count=1))
+          p.write_text(re.sub(r'(?m)^version = "[^"]+"', f'version = "{ver}"', p.read_text(encoding='utf-8'), count=1), encoding='utf-8')
           print(f"Synced to {ver}")
           PYEOF
 
