@@ -121,7 +121,9 @@ pub struct UpgradeProgress {
 fn manifest_candidate_paths(app: &AppHandle) -> Vec<PathBuf> {
     let mut v = Vec::new();
     // 优先：Tauri bundle resource 目录（打包后的正式路径）
+    // Linux 下 resource_dir 是 /usr/lib/<App Name>，资源在 _up_/ 子目录
     if let Ok(resource_dir) = app.path().resource_dir() {
+        v.push(resource_dir.join("_up_/software-manifest.json"));
         v.push(resource_dir.join("software-manifest.json"));
     }
     // 生产 Linux 安装路径
