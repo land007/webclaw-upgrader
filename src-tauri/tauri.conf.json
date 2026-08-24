@@ -43,8 +43,9 @@
         ]
       }
     },
-    "resources": [
-      "../software-manifest.json"
-    ]
+    "resources": {
+      "../software-manifest.json": "../software-manifest.json",
+      "icons/Assets.car": "Assets.car"
+    }
   }
 }
